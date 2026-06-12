@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sprout – Magic Color Garden</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #FFF9E6; font-family: 'Nunito', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 16px; }
+  h1 { font-size: 22px; font-weight: 700; color: #3B6D11; margin-bottom: 4px; text-align: center; }
+  .subtitle { font-size: 14px; color: #639922; margin-bottom: 16px; text-align: center; }
+  .scene { position: relative; width: 100%; max-width: 520px; background: #e8f4fd; border-radius: 24px; overflow: hidden; height: 340px; }
+  .sky { position: absolute; inset: 0; height: 65%; background: linear-gradient(180deg, #c9e8f9 0%, #e8f4fd 100%); }
+  .ground { position: absolute; bottom: 0; left: 0; right: 0; height: 38%; background: #b5d88a; border-radius: 0 0 24px 24px; }
+  .dirt { position: absolute; bottom: 0; left: 0; right: 0; height: 18%; background: #c8a96e; border-radius: 0 0 24px 24px; }
+  .item { position: absolute; cursor: pointer; user-select: none; transition: transform 0.15s; }
+  .item:hover { transform: scale(1.1); }
+  .item:active { transform: scale(0.93); }
+  .progress-wrap { width: 100%; max-width: 520px; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+  .progress-bar { flex: 1; height: 14px; background: #e0e0d0; border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg,#f9c74f,#f4a200); border-radius: 99px; transition: width 0.4s ease; }
+  .speech { width: 100%; max-width: 520px; margin-top: 10px; background: #fff; border: 1.5px solid #d4edaa; border-radius: 14px; padding: 10px 16px; font-size: 15px; color: #3B6D11; text-align: center; min-height: 42px; }
+  .celebrate { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; background: rgba(255,245,80,0.88); border-radius: 24px; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+  .celebrate.show { opacity: 1; pointer-events: auto; }
+  .celebrate p { font-size: 22px; font-weight: 700; color: #5a3e00; }
+  .reset-btn { margin-top: 12px; padding: 10px 28px; border-radius: 99px; border: 2px solid #5DBB5D; background: #fff; color: #3B6D11; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .reset-btn:hover { background: #EAF3DE; }
+  .sparkle { position: absolute; pointer-events: none; animation: pop 0.55s forwards; font-size: 18px; }
+  @keyframes pop { 0%{opacity:1;transform:scale(0.5) translateY(0)} 100%{opacity:0;transform:scale(1.6) translateY(-36px)} }
+  .wiggle { animation: wig 0.4s ease; }
+  @keyframes wig { 0%{transform:rotate(0)} 25%{transform:rotate(-9deg) scale(1.12)} 50%{transform:rotate(9deg) scale(1.17)} 75%{transform:rotate(-4deg)} 100%{transform:rotate(0) scale(1)} }
+  .stars { display: flex; gap: 6px; max-width: 520px; width: 100%; justify-content: center; margin-top: 10px; }
+  .star { font-size: 26px; opacity: 0.2; transition: opacity 0.3s, transform 0.3s; }
+  .star.lit { opacity: 1; transform: scale(1.2); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<h1>🌱 Magic Color Garden</h1>
+<p class="subtitle">Tap everything to wake up the garden!</p>
+<div class="scene" id="scene">
+  <div class="sky"></div><div class="ground"></div><div class="dirt"></div>
+  <div class="item" id="sun" style="top:16px;left:26px" onclick="tap('sun')">
+    <svg width="62" height="62" viewBox="0 0 62 62">
+      <circle id="sun-c" cx="31" cy="31" r="14" fill="#ccc" stroke="#bbb" stroke-width="2"/>
+      <g id="sun-r" opacity="0.35">
+        <line x1="31" y1="5" x2="31" y2="13" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="31" y1="49" x2="31" y2="57" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="5" y1="31" x2="13" y2="31" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="49" y1="31" x2="57" y2="31" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="13" y1="13" x2="19" y2="19" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="43" y1="43" x2="49" y2="49" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="49" y1="13" x2="43" y2="19" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="13" y1="49" x2="19" y2="43" stroke="#bbb" stroke-width="3" stroke-linecap="round"/>
+      </g>
+    </svg>
+  </div>
+  <div class="item" id="cloud" style="top:12px;right:36px" onclick="tap('cloud')">
+    <svg width="82" height="50" viewBox="0 0 82 50">
+      <ellipse id="cl-m" cx="41" cy="32" rx="30" ry="15" fill="#ccc"/>
+      <ellipse id="cl-l" cx="26" cy="27" rx="14" ry="12" fill="#ccc"/>
+      <ellipse id="cl-r" cx="56" cy="25" rx="16" ry="14" fill="#ccc"/>
+    </svg>
+  </div>
+  <div class="item" id="butterfly" style="top:86px;left:44%;transform:translateX(-50%)" onclick="tap('butterfly')">
+    <svg width="60" height="48" viewBox="0 0 60 48">
+      <ellipse id="bf-l" cx="18" cy="22" rx="16" ry="11" fill="#ccc" opacity="0.9" transform="rotate(-14,18,22)"/>
+      <ellipse id="bf-r" cx="42" cy="22" rx="16" ry="11" fill="#ccc" opacity="0.9" transform="rotate(14,42,22)"/>
+      <ellipse cx="28" cy="28" rx="3" ry="8" fill="#aaa" id="bf-b1"/>
+      <ellipse cx="32" cy="28" rx="3" ry="8" fill="#aaa" id="bf-b2"/>
+      <line x1="28" y1="20" x2="22" y2="12" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="32" y1="20" x2="38" y2="12" stroke="#aaa" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="item" id="f1" style="bottom:84px;left:52px" onclick="tap('f1')">
+    <svg width="50" height="78" viewBox="0 0 50 78">
+      <line id="f1-s" x1="25" y1="38" x2="25" y2="78" stroke="#bbb" stroke-width="4" stroke-linecap="round"/>
+      <circle id="f1-c" cx="25" cy="36" r="9" fill="#ccc"/>
+      <circle id="f1-p1" cx="25" cy="21" r="7" fill="#ccc"/><circle id="f1-p2" cx="37" cy="29" r="7" fill="#ccc"/>
+      <circle id="f1-p3" cx="37" cy="43" r="7" fill="#ccc"/><circle id="f1-p4" cx="25" cy="51" r="7" fill="#ccc"/>
+      <circle id="f1-p5" cx="13" cy="43" r="7" fill="#ccc"/><circle id="f1-p6" cx="13" cy="29" r="7" fill="#ccc"/>
+    </svg>
+  </div>
+  <div class="item" id="f2" style="bottom:76px;left:50%;transform:translateX(-50%)" onclick="tap('f2')">
+    <svg width="50" height="90" viewBox="0 0 50 90">
+      <line id="f2-s" x1="25" y1="38" x2="25" y2="90" stroke="#bbb" stroke-width="4" stroke-linecap="round"/>
+      <circle id="f2-c" cx="25" cy="36" r="9" fill="#ccc"/>
+      <circle id="f2-p1" cx="25" cy="21" r="7" fill="#ccc"/><circle id="f2-p2" cx="37" cy="29" r="7" fill="#ccc"/>
+      <circle id="f2-p3" cx="37" cy="43" r="7" fill="#ccc"/><circle id="f2-p4" cx="25" cy="51" r="7" fill="#ccc"/>
+      <circle id="f2-p5" cx="13" cy="43" r="7" fill="#ccc"/><circle id="f2-p6" cx="13" cy="29" r="7" fill="#ccc"/>
+    </svg>
+  </div>
+  <div class="item" id="f3" style="bottom:80px;right:52px" onclick="tap('f3')">
+    <svg width="50" height="78" viewBox="0 0 50 78">
+      <line id="f3-s" x1="25" y1="38" x2="25" y2="78" stroke="#bbb" stroke-width="4" stroke-linecap="round"/>
+      <circle id="f3-c" cx="25" cy="36" r="9" fill="#ccc"/>
+      <circle id="f3-p1" cx="25" cy="21" r="7" fill="#ccc"/><circle id="f3-p2" cx="37" cy="29" r="7" fill="#ccc"/>
+      <circle id="f3-p3" cx="37" cy="43" r="7" fill="#ccc"/><circle id="f3-p4" cx="25" cy="51" r="7" fill="#ccc"/>
+      <circle id="f3-p5" cx="13" cy="43" r="7" fill="#ccc"/><circle id="f3-p6" cx="13" cy="29" r="7" fill="#ccc"/>
+    </svg>
+  </div>
+  <div class="item" id="snail" style="bottom:60px;right:106px" onclick="tap('snail')">
+    <svg width="54" height="40" viewBox="0 0 54 40">
+      <ellipse id="sn-b" cx="20" cy="28" rx="18" ry="10" fill="#ccc"/>
+      <ellipse id="sn-sh" cx="20" cy="22" rx="11" ry="11" fill="#bbb"/>
+      <path id="sn-sp" d="M20,22 m0,-5 a5,5 0 1,1 0.01,0" fill="none" stroke="#999" stroke-width="1.5"/>
+      <line id="sn-a1" x1="36" y1="22" x2="44" y2="15" stroke="#bbb" stroke-width="2" stroke-linecap="round"/>
+      <line id="sn-a2" x1="38" y1="25" x2="48" y2="20" stroke="#bbb" stroke-width="2" stroke-linecap="round"/>
+      <circle id="sn-e1" cx="44" cy="14" r="2.5" fill="#bbb"/>
+      <circle id="sn-e2" cx="49" cy="19" r="2.5" fill="#bbb"/>
+    </svg>
+  </div>
+  <div class="celebrate" id="celebrate">
+    <span style="font-size:52px">🌈</span>
+    <p>You woke up the garden!</p>
+    <span style="font-size:38px">⭐🌸⭐</span>
+    <button class="reset-btn" onclick="reset()">Play again 🌱</button>
+  </div>
+</div>
+<div class="stars" id="stars">
+  <span class="star" id="s0">⭐</span><span class="star" id="s1">⭐</span>
+  <span class="star" id="s2">⭐</span><span class="star" id="s3">⭐</span>
+  <span class="star" id="s4">⭐</span><span class="star" id="s5">⭐</span>
+  <span class="star" id="s6">⭐</span>
+</div>
+<div class="progress-wrap">
+  <span style="font-size:13px;color:#639922">Garden awake</span>
+  <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+  <span style="font-size:13px;color:#639922;min-width:36px;text-align:right" id="cnt">0/7</span>
+</div>
+<div class="speech" id="speech">Tap anything to wake up the garden! 🌱</div>
+<script>
+const cfg={sun:{els:{'sun-c':'#FFCC00','sun-r':'rays'},msg:"Yay! The sun woke up! ☀️"},cloud:{els:{'cl-m':'#ffffff','cl-l':'#f0f4ff','cl-r':'#e8efff'},msg:"A fluffy white cloud! ☁️"},butterfly:{els:{'bf-l':'#FF6B9D','bf-r':'#FF9BCD','bf-b1':'#6B3FA0','bf-b2':'#6B3FA0'},msg:"A pink butterfly! Flutter flutter! 🦋"},f1:{els:{'f1-c':'#FFFF00','f1-s':'stem','f1-p1':'#FF6B6B','f1-p2':'#FF6B6B','f1-p3':'#FF6B6B','f1-p4':'#FF6B6B','f1-p5':'#FF6B6B','f1-p6':'#FF6B6B'},msg:"A red flower bloomed! 🌸"},f2:{els:{'f2-c':'#FFFF00','f2-s':'stem','f2-p1':'#FF9F1C','f2-p2':'#FF9F1C','f2-p3':'#FF9F1C','f2-p4':'#FF9F1C','f2-p5':'#FF9F1C','f2-p6':'#FF9F1C'},msg:"An orange flower bloomed! 🌼"},f3:{els:{'f3-c':'#FFFF00','f3-s':'stem','f3-p1':'#C77DFF','f3-p2':'#C77DFF','f3-p3':'#C77DFF','f3-p4':'#C77DFF','f3-p5':'#C77DFF','f3-p6':'#C77DFF'},msg:"A purple flower bloomed! 💜"},snail:{els:{'sn-b':'#A0D080','sn-sh':'#D4A843','sn-sp':'spiral','sn-a1':'ant','sn-a2':'ant','sn-e1':'#333','sn-e2':'#333'},msg:"A friendly snail says hi! 🐌"}};
+const done=new Set();
+function tap(id){if(done.has(id))return;done.add(id);const c=cfg[id];for(const[elId,color]of Object.entries(c.els)){const el=document.getElementById(elId);if(!el)continue;if(color==='rays'){el.setAttribute('opacity','1');el.querySelectorAll('line').forEach(l=>l.setAttribute('stroke','#FFAA00'));}else if(color==='stem'){el.setAttribute('stroke','#5DBB5D');}else if(color==='spiral'){el.setAttribute('stroke','#8B6914');}else if(color==='ant'){el.setAttribute('stroke','#A0D080');}else{const a=el.tagName==='line'||el.tagName==='path'?'stroke':'fill';el.setAttribute(a,color);}}const wrap=document.getElementById(id);wrap.classList.remove('wiggle');void wrap.offsetWidth;wrap.classList.add('wiggle');setTimeout(()=>wrap.classList.remove('wiggle'),450);spawnSparkles(wrap);document.getElementById('speech').textContent=c.msg;const n=done.size;document.getElementById('prog').style.width=Math.round(n/7*100)+'%';document.getElementById('cnt').textContent=n+'/7';if(n-1<7){const s=document.getElementById('s'+(n-1));if(s)s.classList.add('lit');}if(n>=7)setTimeout(()=>document.getElementById('celebrate').classList.add('show'),500);}
+function spawnSparkles(el){const r=el.getBoundingClientRect(),sr=document.getElementById('scene').getBoundingClientRect();const cx=r.left-sr.left+r.width/2,cy=r.top-sr.top+r.height/2;const emojis=['✨','⭐','💫','🌟'];for(let i=0;i<5;i++){const s=document.createElement('div');s.className='sparkle';s.textContent=emojis[Math.floor(Math.random()*4)];s.style.cssText=`left:${cx+(Math.random()-.5)*60}px;top:${cy+(Math.random()-.5)*40}px;font-size:${14+Math.floor(Math.random()*12)}px`;document.getElementById('scene').appendChild(s);setTimeout(()=>s.remove(),580);}}
+function reset(){done.clear();document.getElementById('prog').style.width='0%';document.getElementById('cnt').textContent='0/7';document.getElementById('speech').textContent='Tap anything to wake up the garden! 🌱';document.getElementById('celebrate').classList.remove('show');for(let i=0;i<7;i++){const s=document.getElementById('s'+i);if(s)s.classList.remove('lit');}const grays={'sun-c':'#ccc','cl-m':'#ccc','cl-l':'#ccc','cl-r':'#ccc','bf-l':'#ccc','bf-r':'#ccc','bf-b1':'#aaa','bf-b2':'#aaa','f1-c':'#ccc','f1-p1':'#ccc','f1-p2':'#ccc','f1-p3':'#ccc','f1-p4':'#ccc','f1-p5':'#ccc','f1-p6':'#ccc','f2-c':'#ccc','f2-p1':'#ccc','f2-p2':'#ccc','f2-p3':'#ccc','f2-p4':'#ccc','f2-p5':'#ccc','f2-p6':'#ccc','f3-c':'#ccc','f3-p1':'#ccc','f3-p2':'#ccc','f3-p3':'#ccc','f3-p4':'#ccc','f3-p5':'#ccc','f3-p6':'#ccc','sn-b':'#ccc','sn-sh':'#bbb','sn-e1':'#bbb','sn-e2':'#bbb'};for(const[id,col]of Object.entries(grays)){const el=document.getElementById(id);if(!el)continue;const a=el.tagName==='line'||el.tagName==='path'?'stroke':'fill';el.setAttribute(a,col);}document.getElementById('sun-r').setAttribute('opacity','0.35');document.querySelectorAll('#sun-r line').forEach(l=>l.setAttribute('stroke','#bbb'));['f1-s','f2-s','f3-s'].forEach(id=>{const el=document.getElementById(id);if(el)el.setAttribute('stroke','#bbb');});document.getElementById('sn-sp').setAttribute('stroke','#999');['sn-a1','sn-a2'].forEach(id=>{const el=document.getElementById(id);if(el)el.setAttribute('stroke','#bbb');});}
+</script>
+</body>
+</html>
